@@ -1,0 +1,42 @@
+#Definne Docker Compose Version
+version: '3.3'
+#Create Services
+services:
+  selenium_hub:
+    image: selenium/hub:3.14.0-curium
+    ports:
+      - 4444:4444
+  android-container-appium:
+    #Download Appium Server
+    image: budtmo/docker-android-real-device
+    network_mode: "service:selenium_hub"
+    privileged: true
+    ports: #Define ports to listen
+      - "1234:6080" # Watch execution from noVNC 
+      - "2345:5554"
+      - "3456:5555" 
+      - "4567:4723" #Hub Selenium/Appium Grid
+    environment:
+      - CONNECT_TO_GRID=true
+    #Add Android 8.1 to hub 
+    #command: bash -c "adb connect 192.168.0.36:3457"
+    #command: bash -c "adb connect 192.168.0.36:3458"
+
+  #Define node 1
+  android-container-v8.1:
+  #Download Android 8.1 
+    image: budtmo/docker-android-x86-8.1
+    privileged: true #Run container in privileged mode
+     # Increase scale number if needed
+    scale: 1
+    depends_on:
+      - android-container-appium
+    ports: #Define ports to use    
+      - "1236:6080" #Watch execution from noVNC 
+      - "2357:5554"
+      - "3458:5555" #Expose port to remote connections 
+    environment:
+      - DEVICE=Nexus 5
+      - CONNECT_TO_GRID=true
+      - APPIUM=true
+      - AUTO_RECORD=true
