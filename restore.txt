@@ -40,3 +40,174 @@ services:
       - CONNECT_TO_GRID=true
       - APPIUM=true
       - AUTO_RECORD=true
+
+
+
+
+# Usage: docker-compose up -d
+version: "3"
+services:
+  selenium_hub:
+    image: selenium/hub
+    environment:
+      - TZ=Europe/Amsterdam
+      - GRID_TIMEOUT=90
+    ports:
+      - "4445:4444"
+
+  appium:
+    image: appium/appium
+    depends_on:
+      - selenium_hub
+    network_mode: "service:selenium_hub"
+    privileged: true
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb #Allows external device connections
+      - ~/.android:/root/.android #Always allow this computer screenshot
+    environment:
+      - CONNECT_TO_GRID=true #Connect to Selenium Hub/Grid
+      - SELENIUM_HOST=selenium_hub #Define docker image to use
+      # Enable it for msite testing
+      #- BROWSER_NAME=chrome
+    ports:
+      - "1236:6080"
+
+  #Define Environments
+  #Android 7.1 - Nexus 5
+  nexus_7.1.1:
+    image: budtmo/docker-android-x86-7.1.1
+    privileged: true
+    depends_on:
+      - selenium_hub
+      - real_device
+    ports:
+      - "6082:6080"
+    volumes:
+      - ./app/spotify.apk:/otp
+      #- ./video-nexus_7.1.1:/tmp/video
+    environment:
+      - DEVICE=Nexus 5
+      - CONNECT_TO_GRID=true
+      - APPIUM=true
+      - SELENIUM_HOST=selenium_hub
+      - AUTO_RECORD=true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # Docker-Android for mobile website testing with chrome browser
+  # Chrome browser exists only for version 7.0 and 7.1.1
+  #samsung_galaxy_web_7.1.1:
+  #  image: budtmo/docker-android-x86-8.1
+  #  privileged: true
+    # Increase scale number if needed
+  #  scale: 1
+  #  depends_on:
+  #    - selenium_hub
+  #    - real_device
+  #  ports:
+  #    - 6080
+  #  volumes:
+  #    - ./video-samsung_7.1.1:/tmp/video
+  #  environment:
+  #    - DEVICE=Samsung Galaxy S6
+  #    - CONNECT_TO_GRID=true
+  #    - APPIUM=true
+  #    - SELENIUM_HOST=selenium_hub
+  #    - MOBILE_WEB_TEST=true
+  #    - AUTO_RECORD=true
+
+  # Docker-Android for mobile website testing with default browser
+  # Default browser exists only for version 5.0.1, 5.1.1 and 6.0
+  #samsung_galaxy_web_5.1.1:
+  #  image: budtmo/docker-android-x86-5.1.1
+  #  privileged: true
+    # Increase scale number if needed
+  #  scale: 1
+  #  depends_on:
+  #    - selenium_hub
+  #    - real_device
+  #  ports:
+  #    - 6080
+  #  volumes:
+  #    - ./video-samsung_5.1.1:/tmp/video
+  #  environment:
+  #    - DEVICE=Samsung Galaxy S6
+  #    - CONNECT_TO_GRID=true
+  #    - APPIUM=true
+  #    - SELENIUM_HOST=selenium_hub
+  #    - MOBILE_WEB_TEST=true
+  #    - AUTO_RECORD=true
+
+
+
+
+  [node]
+  detect-drivers = true
+  [[node.driver-configuration]]
+  max-sessions = 100
+  display-name = "Firefox Nightly"
+  stereotype = "{\"browserName\": \"firefox\", \"browserVersion\": \"93\", \"platformName\": \"linux\"}}"
+  [[node.driver-configuration]]
+  display-name = "Chrome Beta"
+  stereotype = "{\"browserName\": \"chrome\", \"browserVersion\": \"94\", \"platformName\": \"linux\"}"
+
+
+  video-image = "selenium/video:latest"
+
+
+
+
+  real_device:
+      image: appium/appium
+      depends_on:
+        - selenium-hub
+      network_mode: "service:selenium-hub"
+      privileged: true
+      volumes:
+        - /dev/bus/usb:/dev/bus/usb
+        - ~/.android:/root/.android
+        #- $PWD/example/sample_apk:/root/tmp
+      environment:
+        - CONNECT_TO_GRID=true
+        - SELENIUM_HOST=selenium-hub
+
+    android-container-v8.1:
+      image: budtmo/docker-android-x86-8.1
+      privileged: true #Run container in privileged mode
+      depends_on:
+        - selenium-hub
+        - real_device
+      ports:
+        - "6080:6080"
+      environment:
+        - DEVICE=Nexus 5
+        - APPIUM=true
+        - CONNECT_TO_GRID=true
+        #- APPIUM_HOST="127.0.0.1"
+        #- APPIUM_PORT=4723
+        - SELENIUM_HOST=selenium-hub
+        #- SELENIUM_PORT=4444
+    #    - MOBILE_WEB_TEST=true
+    #    - AUTO_RECORD=true
