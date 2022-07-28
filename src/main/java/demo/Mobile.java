@@ -1,5 +1,6 @@
 package demo;
 
+import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 
@@ -36,7 +37,7 @@ public class Mobile {
 
     /*
      * Warning: Make sure to load app on the container
-     *  docker cp C:\Users\jesus.bustamante\Desktop\Appium-Docker\assets\spotify.apk selenium-real_device-1:/opt
+     *  docker cp C:\Users\jesus.bustamante\Desktop\Appium-Docker\assets\spotify.apk selenium-nexus_7.1.1-1:/opt
      *
      *
      * Task: Create a docker compose to load container with the app and volumen pre
@@ -45,7 +46,7 @@ public class Mobile {
      */
 
     // Set Container URI -> Selenium/Appium Grid
-    private final String remoteContainer = "http://localhost:4723/wd/hub";
+    private final String remoteContainer = "http://localhost:4444";
 
     @Before
     public void beforeClass ( ) throws MalformedURLException {
@@ -62,9 +63,6 @@ public class Mobile {
         // Reset environment: remove app and install it again
         desiredCapabilities.setCapability ( MobileCapabilityType.FULL_RESET , true );
         desiredCapabilities.setCapability ( MobileCapabilityType.NO_RESET , false );
-        // Set properties to interacting with app elements
-        //desiredCapabilities.setCapability ( "appPackage" , "com.spotify.music" );
-        //desiredCapabilities.setCapability ( "appActivity" , "com.spotify.music.MainActivity" );
 
         // Create URL
         URL remoteUrl = new URL ( remoteContainer );
@@ -80,8 +78,11 @@ public class Mobile {
     public void menu ( ) throws InterruptedException {
 
         Thread.sleep ( 15000 );
-        // Spotify: Package: com.spotify.music
-        //appium.launchApp ( );
+
+        appium.switchTo ();
+
+        // Print XML to get AppElements
+        System.out.println ( appium.getPageSource ( ) );
 
         // Click on Login
         By loginBy = By.xpath ( "//*[@text='Sign up free']" );
@@ -99,8 +100,7 @@ public class Mobile {
         By goToLoginBy = By.id ( "com.spotify.music:id/button_positive" );
         wait.until ( ExpectedConditions.visibilityOfElementLocated ( goToLoginBy ) ).click ( );
 
-        // Print XML to get AppElements
-        System.out.println ( appium.getPageSource ( ) );
+
 
         // Validate "Sign up free" Button is Displayed
         By assertMagicLinkBy = By.id ( "com.spotify.music:id/request_magiclink_lower_button" );
