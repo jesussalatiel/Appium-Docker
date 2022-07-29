@@ -1,9 +1,0 @@
-[node]
-detect-drivers = false
-
-[relay]
-url = "http://127.0.0.1:4723/wd/hub"
-status-endpoint = "/status"
-configs = [
-    "1", "{\"platformName\": \"Android\", \"appium:platformVersion\": \"8.1\", , \"appium:deviceName\": \"emulator-5554\"}"
-]

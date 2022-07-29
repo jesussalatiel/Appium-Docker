@@ -46,7 +46,7 @@ public class Mobile {
      */
 
     // Set Container URI -> Selenium/Appium Grid
-    private final String remoteContainer = "http://localhost:4444";
+    private final String remoteContainer = "http://localhost:4444/wd/hub";
 
     @Before
     public void beforeClass ( ) throws MalformedURLException {
@@ -59,7 +59,7 @@ public class Mobile {
         // and emulators
         desiredCapabilities.setCapability ( MobileCapabilityType.AUTOMATION_NAME , "UIAutomator2" );
         // Copy app on the container file device and execute from there
-        desiredCapabilities.setCapability ( "app" , "/opt/spotify.apk" );
+        desiredCapabilities.setCapability ( "app" , "/tmp/spotify.apk" );
         // Reset environment: remove app and install it again
         desiredCapabilities.setCapability ( MobileCapabilityType.FULL_RESET , true );
         desiredCapabilities.setCapability ( MobileCapabilityType.NO_RESET , false );

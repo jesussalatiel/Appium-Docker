@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
 
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -22,7 +23,7 @@ public class UI {
     private String URI = "https://www.saucedemo.com/";
     private String nodeURI = "http://localhost:4444";
 
-    private String browser = "Firefox_Lin";
+    private String browser = "";
 
     @Before
     public void setup ( ) throws MalformedURLException, InterruptedException {
@@ -55,9 +56,12 @@ public class UI {
                 capabilities.setCapability ( ChromeOptions.CAPABILITY , firefoxOptions );
                 driver = WebDriverManager.firefoxdriver ( ).remoteAddress ( nodeURI ).capabilities ( capabilities ).browserInDocker ().create ();
                 break;
+            default:
+                WebDriverManager.firefoxdriver ().setup ();
+                driver = new ChromeDriver (  );
         }
 
-        System.out.println ( ((RemoteWebDriver)driver).getCapabilities ().toString () );
+        //System.out.println ( ((RemoteWebDriver)driver).getCapabilities ().toString () );
         driver.manage ().timeouts ().implicitlyWait ( Duration.ofSeconds ( 60 ) );
         driver.manage ().window ().maximize ();
         driver.navigate ( ).to ( URI );
